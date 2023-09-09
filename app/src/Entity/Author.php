@@ -18,11 +18,11 @@ use Symfony\Component\Validator\Constraints\NotBlank;
 use Symfony\Component\Validator\Constraints\Valid;
 
 #[ORM\Entity(repositoryClass: AuthorRepository::class)]
-//#[ApiResource(
-//    attributes: [],
-//    denormalizationContext: ["groups"=>["author:write"]],
-//    normalizationContext: ["groups"=>["author:read"]]
-//)]
+#[ApiResource(
+    attributes: [],
+    denormalizationContext: ["groups"=>["author:write"]],
+    normalizationContext: ["groups"=>["author:read"]]
+)]
 #[ApiFilter(PropertyFilter::class)]
 #[UniqueEntity(fields: ["email"])]
 class Author
@@ -30,42 +30,42 @@ class Author
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column(type: 'integer')]
-    private $id;
+    private int $id;
 
     #[ORM\Column(type: 'string', length: 255)]
     #[Groups([
         "author:read",
         "author:write",
-        "ebook:item:get",
-        "ebook:write"
+        "book:item:get",
+        "book:write"
     ])]
     #[NotBlank]
-    private $firstName;
+    private string $firstName;
 
     #[ORM\Column(type: 'string', length: 255)]
     #[Groups([
         "author:read",
         "author:write",
-        "ebook:item:get",
-        "ebook:write"
+        "book:item:get",
+        "book:write"
     ])]
     #[NotBlank]
-    private $lastName;
+    private string $lastName;
 
     #[ORM\Column(type: 'string', length: 255)]
     #[Groups([
         "author:read",
         "author:write",
-        "ebook:item:get",
-        "ebook:write"
+        "book:item:get",
+        "book:write"
     ])]
     #[NotBlank]
     #[Email]
-    private $email;
+    private string $email;
 
     #[ORM\Column(type: 'text', nullable: true)]
     #[Groups(["author:read"])]
-    private $description;
+    private string $description;
 
     #[ORM\Column(type: 'datetime')]
     #[Groups(["author:read"])]
@@ -162,7 +162,7 @@ class Author
     {
         if (!$this->books->contains($book)) {
             $this->books[] = $book;
-            $book->setAutor($this);
+            $book->setAuthor($this);
         }
 
         return $this;
@@ -172,8 +172,8 @@ class Author
     {
         if ($this->books->removeElement($book)) {
             // set the owning side to null (unless already changed)
-            if ($book->getAutor() === $this) {
-                $book->setAutor(null);
+            if ($book->getAuthor() === $this) {
+                $book->setAuthor(null);
             }
         }
 

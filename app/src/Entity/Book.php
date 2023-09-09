@@ -18,31 +18,30 @@ use Symfony\Component\Validator\Constraints\NotBlank;
 use Symfony\Component\Validator\Constraints\Valid;
 
 #[ORM\Entity(repositoryClass: BookRepository::class)]
-//#[ApiResource(
-//    collectionOperations: ["get", "post"],
-//    itemOperations: [
-//        "get" => [
-//            "path" => "/getEbook/{id}",
-//            "normalization_context" => [
-//                "groups"=> [
-//                    "ebook:read",
-//                    "ebook:item:get"
-//                ]
-//            ]
-//        ],
-//        "put"
-//    ],
-//    attributes: [
-//        "pagination_items_per_page" => 3,
-//        "formats" => [
-//            "jsonld",
-//            "json",
-//            "csv" => ["text/csv"]]
-//        ],
-//    denormalizationContext: ["groups"=>["ebook:write"]],
-//    normalizationContext: ["groups"=>["ebook:read"]]
-//
-//)]
+#[ApiResource(
+    collectionOperations: ["get", "post"],
+    itemOperations: [
+        "get" => [
+            "normalization_context" => [
+                "groups"=> [
+                    "book:read",
+                    "book:item:get"
+                ]
+            ]
+        ],
+        "put"
+    ],
+    attributes: [
+        "pagination_items_per_page" => 3,
+        "formats" => [
+            "jsonld",
+            "json",
+            "csv" => ["text/csv"]]
+        ],
+    denormalizationContext: ["groups"=>["book:write"]],
+    normalizationContext: ["groups"=>["book:read"]]
+
+)]
 #[ApiFilter(BooleanFilter::class, properties: ["isPublished"])]
 #[ApiFilter(
     SearchFilter::class,
@@ -59,12 +58,12 @@ class Book
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column(type: 'integer')]
-    private $id;
+    private int $id;
 
     #[ORM\Column(type: 'string', length: 255)]
     #[Groups([
-        "ebook:read",
-        "ebook:write",
+        "book:read",
+        "book:write",
         "author:read",
         "author:write"
     ])]
@@ -79,7 +78,7 @@ class Book
 
     #[ORM\Column(type: 'text', nullable: true)]
     #[Groups([
-        "ebook:read",
+        "book:read",
         "author:read",
         "author:write"
     ])]
@@ -89,8 +88,8 @@ class Book
 
     #[ORM\Column(type: 'integer')]
     #[Groups([
-        "ebook:read",
-        "ebook:write",
+        "book:read",
+        "book:write",
         "author:write"
     ])]
     #[NotBlank]
@@ -102,14 +101,14 @@ class Book
 
 
     #[ORM\Column(type: 'boolean')]
-    #[Groups(["ebook:read"])]
+    #[Groups(["book:read"])]
     private $isPublished = false;
 
 
     #[ORM\Column(type: 'integer')]
     #[Groups([
-        "ebook:read",
-        "ebook:write",
+        "book:read",
+        "book:write",
         "author:write"
     ])]
     #[NotBlank]
@@ -119,8 +118,8 @@ class Book
     #[ORM\ManyToOne(targetEntity: Author::class, inversedBy: 'books')]
     #[ORM\JoinColumn(nullable: false)]
     #[Groups([
-        "ebook:read",
-        "ebook:write",
+        "book:read",
+        "book:write",
         "author:write"
     ])]
     #[Valid]
@@ -156,7 +155,7 @@ class Book
         return $this->description;
     }
 
-    #[Groups(["ebook:read"])]
+    #[Groups(["book:read"])]
     public function getShortDescription(): ?string
     {
         if (strlen($this->description) < 40) {
@@ -172,7 +171,7 @@ class Book
 
         return $this;
     }
-    #[Groups(["ebook:write", "author:write"])]
+    #[Groups(["book:write", "author:write"])]
     #[SerializedName("description")]
     public function setTextDescription(?string $description): self
     {
@@ -198,7 +197,7 @@ class Book
         return $this->createdAt;
     }
 
-    #[Groups(["ebook:read"])]
+    #[Groups(["book:read"])]
     public function getCreatedAtAgo(): string
     {
         return Carbon::instance($this->getCreatedAt())->diffForHumans();
