@@ -103,7 +103,7 @@ class Book
 
     #[ORM\Column(type: 'boolean')]
     #[Groups(["book:read"])]
-    private boolean $isPublished = false;
+    private  $isPublished = false;
 
 
     #[ORM\Column(type: 'integer')]

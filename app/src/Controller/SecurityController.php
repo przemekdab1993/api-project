@@ -27,6 +27,6 @@ class SecurityController extends AbstractController
     #[Route('/logout', name: 'app_logout')]
     public function logout(): Response
     {
-        throw new \Exception('should not be recheed');
+        throw new \Exception('should not be reached');
     }
 }

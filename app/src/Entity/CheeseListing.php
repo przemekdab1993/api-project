@@ -72,7 +72,7 @@ class CheeseListing
     private $id;
 
     #[ORM\Column(type: 'string', length: 255)]
-    #[Groups(['cheese:read', 'cheese:write', 'user_api:read', 'user_api:write'])]
+    #[Groups(['cheese:read', 'cheese:write', 'user_apis:read', 'user_apis:write'])]
     #[NotBlank]
     #[Length(
         min: 2,
@@ -82,12 +82,12 @@ class CheeseListing
     private $title;
 
     #[ORM\Column(type: 'text')]
-    #[Groups(['cheese:read', 'user_api:read'])]
+    #[Groups(['cheese:read', 'user_apis:read'])]
     #[NotBlank]
     private $description;
 
     #[ORM\Column(type: 'integer')]
-    #[Groups(['cheese:read', 'cheese:write', 'user_api:read', 'user_api:write'])]
+    #[Groups(['cheese:read', 'cheese:write', 'user_apis:read', 'user_apis:write'])]
     #[NotBlank]
     private $price;
 
@@ -98,7 +98,7 @@ class CheeseListing
     private $isPublished = false;
 
     #[ORM\Column(type: 'integer')]
-    #[Groups(['cheese:read', 'cheese:write', 'user_api:read', 'user_api:write'])]
+    #[Groups(['cheese:read', 'cheese:write', 'user_apis:read', 'user_apis:write'])]
     #[NotBlank]
     private $quantity;
 

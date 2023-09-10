@@ -41,8 +41,8 @@ use Symfony\Component\Validator\Constraints\Valid;
         ]
     ],
     shortName: 'user_api',
-    denormalizationContext: ['groups' => ['user_api:write']],
-    normalizationContext: ['groups' => ['user_api:read']]
+    denormalizationContext: ['groups' => ['user_apis:write']],
+    normalizationContext: ['groups' => ['user_apis:read']]
 
 )]
 #[ApiFilter(PropertyFilter::class)]
@@ -56,34 +56,38 @@ class UserApi implements UserInterface, PasswordAuthenticatedUserInterface
     private $id;
 
     #[ORM\Column(type: 'string', length: 180, unique: true)]
-    #[Groups(['user_api:read', 'user_api:write', 'cheese:item:get'])]
+    #[Groups(['user_apis:read', 'user_apis:write', 'cheese:item:get'])]
     #[NotBlank]
     #[Email]
     private $email;
 
     #[ORM\Column(type: 'json')]
-    #[Groups(['admin_api:write'])]
+    #[Groups(['admin_apis:write'])]
     private $roles = [];
 
     #[ORM\Column(type: 'string')]
     private $password;
 
-    #[Groups(['user_api:write'])]
+    #[Groups(['user_apis:write'])]
     #[NotBlank(groups: ['create'])]
     private $plainPassword;
 
     #[ORM\Column(type: 'string', length: 255, unique: true)]
-    #[Groups(['user_api:read', 'user_api:write', 'cheese:item:get'])]
+    #[Groups([
+        'user_apis:read', 'user_apis:write',
+        'cheese:item:get',
+        'owner:read'
+    ])]
     #[NotBlank]
     private $userName;
 
     #[ORM\OneToMany(mappedBy: 'owner', targetEntity: CheeseListing::class, cascade: ['persist'], orphanRemoval: true)]
-    #[Groups(['user_api:read', 'user_api:write'])]
+    #[Groups(['user_apis:read', 'user_apis:write'])]
     #[Valid]
     private $cheeseListings;
 
     #[ORM\Column(type: 'string', length: 255, nullable: true)]
-    #[Groups(['admin_api:read', 'owner:read', 'user_api:write'])]
+    #[Groups(['admin_apis:read', 'owner:read', 'user_apis:write'])]
     private $phoneNumber;
 
     public function __construct()
