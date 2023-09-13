@@ -5,6 +5,7 @@ namespace App\Tests\Functional;
 use App\Entity\CheeseListing;
 use App\Entity\UserApi;
 use App\Test\CustomApiTestCase;
+use Doctrine\ORM\EntityManager;
 use Hautelook\AliceBundle\PhpUnit\ReloadDatabaseTrait;
 use Symfony\Component\DependencyInjection\Container;
 
@@ -21,6 +22,18 @@ class CheesesListingResourceTest extends CustomApiTestCase
             'json' => []
         ]);
         $this->assertResponseStatusCodeSame(401);
+
+
+
+        $this->createAndLoginUser($client, 'ewelina@gmail.com', 'qwerty');
+
+        $this->assertResponseStatusCodeSame(204);
+
+        $client->request('POST', 'api/cheeses', [
+            'headers' => [ 'Content-Type' => 'application/json'],
+            'json' => []
+        ]);
+        $this->assertResponseStatusCodeSame(422);
 
 //        $authenticatedUser = $this->createUserAndLogIn($client, 'ewelinakula@gmail.com', 'kula');
 //        $otherUser = $this->createUser('juje@gmail.com','sra');
