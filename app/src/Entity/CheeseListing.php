@@ -34,7 +34,8 @@ use Symfony\Component\Validator\Constraints\Valid;
             ]
         ],
         'put' => [
-            'access_control' => 'is_granted("EDIT", previous_object) ',
+            'access_control' => 'is_granted("ROLE_USER") and previous_object.getOwner() == user', //'is_granted("EDIT", previous_object) ',
+            'access_control_message' => 'Only the creator can edit a cheeseListing'
         ],
         'delete' => [
             'access_control' => 'is_granted("ROLE_ADMIN")'
@@ -125,12 +126,12 @@ class CheeseListing
         return $this->title;
     }
 
-//    public function setTitle(string $title): self
-//    {
-//        $this->title = $title;
-//
-//        return $this;
-//    }
+    public function setTitle(string $title): self
+    {
+        $this->title = $title;
+
+        return $this;
+    }
 
     public function getDescription(): ?string
     {

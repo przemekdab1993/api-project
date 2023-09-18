@@ -54,6 +54,8 @@ class  CustomApiTestCase extends ApiTestCase
                 'password' => $password
             ]
         ]);
+
+        $this->assertResponseStatusCodeSame(204);
     }
 
     protected function createAndLoginUser(Client $client, string $email, string $password): UserApi
@@ -62,9 +64,11 @@ class  CustomApiTestCase extends ApiTestCase
         $this->userLogin($client, $email, $password);
 
         return $user;
+
+        $this->assertResponseStatusCodeSame(204);
     }
 
-    private function getEntityManager(): EntityManagerInterface
+    protected function getEntityManager(): EntityManagerInterface
     {
         return static::getContainer()->get('doctrine')->getManager();
     }
