@@ -15,6 +15,7 @@ use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Serializer\Annotation\SerializedName;
+use Symfony\Component\Validator\Constraint;
 use Symfony\Component\Validator\Constraints\Email;
 use Symfony\Component\Validator\Constraints\NotBlank;
 use Symfony\Component\Validator\Constraints\Valid;
@@ -27,7 +28,7 @@ use Symfony\Component\Validator\Constraints\Valid;
         ],
         'post' => [
             'access_control' => 'is_granted("IS_AUTHENTICATED_ANONYMOUSLY")',
-            //'validation_groups' => ['Default', 'create']
+            'validation_groups' => ['Default', 'create']
         ]
     ],
     itemOperations: [
@@ -56,10 +57,10 @@ class UserApi implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Column(type: 'integer')]
     private int $id;
 
+    #[Email]
+    #[NotBlank]
     #[ORM\Column(type: 'string', length: 180, unique: true)]
     #[Groups(['user_api:read', 'user_api:write', 'cheese:item:get'])]
-    #[NotBlank]
-    #[Email]
     private string $email;
 
     #[ORM\Column(type: 'json')]
@@ -69,22 +70,22 @@ class UserApi implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Column(type: 'string')]
     private string $password;
 
-    //#[NotBlank(groups: ['create'])]
     #[Groups(['user_api:write'])]
-    private ?string $plainPassword;
+    #[NotBlank(groups: ['create'])]
+    private $plainPassword;
 
+    #[NotBlank]
     #[ORM\Column(type: 'string', length: 255, unique: true)]
     #[Groups([
         'user_api:read', 'user_api:write',
         'cheese:item:get',
         'owner:read'
     ])]
-    #[NotBlank]
     private ?string $userName;
 
+    #[Valid]
     #[ORM\OneToMany(mappedBy: 'owner', targetEntity: CheeseListing::class, cascade: ['persist'], orphanRemoval: true)]
     #[Groups(['user_api:read', 'user_api:write'])]
-    #[Valid]
     private Collection $cheeseListings;
 
     #[ORM\Column(type: 'string', length: 255, nullable: true)]
@@ -165,6 +166,19 @@ class UserApi implements UserInterface, PasswordAuthenticatedUserInterface
         return $this;
     }
 
+    public function getPlainPassword(): ?string
+    {
+        return $this->plainPassword;
+    }
+
+    #[SerializedName('password')]
+    public function setPlainPassword(string $plainPassword): self
+    {
+        $this->plainPassword = $plainPassword;
+
+        return $this;
+    }
+
     /**
      * Returning a salt is only needed, if you are not using a modern
      * hashing algorithm (e.g. bcrypt or sodium) in your security.yaml.
@@ -218,19 +232,6 @@ class UserApi implements UserInterface, PasswordAuthenticatedUserInterface
                 $cheeseListing->setOwner(null);
             }
         }
-
-        return $this;
-    }
-
-    public function getPlainPassword(): ?string
-    {
-        return $this->plainPassword;
-    }
-
-    #[SerializedName('password')]
-    public function setPlainPassword(string $plainPassword): self
-    {
-        $this->plainPassword = $plainPassword;
 
         return $this;
     }
