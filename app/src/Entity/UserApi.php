@@ -9,6 +9,7 @@ use App\Repository\UserApiRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use phpDocumentor\Reflection\Types\Integer;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
@@ -26,7 +27,7 @@ use Symfony\Component\Validator\Constraints\Valid;
         ],
         'post' => [
             'access_control' => 'is_granted("IS_AUTHENTICATED_ANONYMOUSLY")',
-            'validation_groups' => ['Default', 'create']
+            //'validation_groups' => ['Default', 'create']
         ]
     ],
     itemOperations: [
@@ -41,8 +42,8 @@ use Symfony\Component\Validator\Constraints\Valid;
         ]
     ],
     shortName: 'user_api',
-    denormalizationContext: ['groups' => ['user_apis:write']],
-    normalizationContext: ['groups' => ['user_apis:read']]
+    denormalizationContext: ['groups' => ['user_api:write']],
+    normalizationContext: ['groups' => ['user_api:read']]
 
 )]
 #[ApiFilter(PropertyFilter::class)]
@@ -53,42 +54,42 @@ class UserApi implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column(type: 'integer')]
-    private $id;
+    private int $id;
 
     #[ORM\Column(type: 'string', length: 180, unique: true)]
-    #[Groups(['user_apis:read', 'user_apis:write', 'cheese:item:get'])]
+    #[Groups(['user_api:read', 'user_api:write', 'cheese:item:get'])]
     #[NotBlank]
     #[Email]
-    private $email;
+    private string $email;
 
     #[ORM\Column(type: 'json')]
-    #[Groups(['admin_apis:write'])]
-    private $roles = [];
+    #[Groups(['admin_api:write'])]
+    private array $roles = [];
 
     #[ORM\Column(type: 'string')]
-    private $password;
+    private string $password;
 
-    #[Groups(['user_apis:write'])]
-    #[NotBlank(groups: ['create'])]
-    private $plainPassword;
+    //#[NotBlank(groups: ['create'])]
+    #[Groups(['user_api:write'])]
+    private ?string $plainPassword;
 
     #[ORM\Column(type: 'string', length: 255, unique: true)]
     #[Groups([
-        'user_apis:read', 'user_apis:write',
+        'user_api:read', 'user_api:write',
         'cheese:item:get',
         'owner:read'
     ])]
     #[NotBlank]
-    private $userName;
+    private ?string $userName;
 
     #[ORM\OneToMany(mappedBy: 'owner', targetEntity: CheeseListing::class, cascade: ['persist'], orphanRemoval: true)]
-    #[Groups(['user_apis:read', 'user_apis:write'])]
+    #[Groups(['user_api:read', 'user_api:write'])]
     #[Valid]
-    private $cheeseListings;
+    private Collection $cheeseListings;
 
     #[ORM\Column(type: 'string', length: 255, nullable: true)]
-    #[Groups(['admin_apis:read', 'owner:read', 'user_apis:write'])]
-    private $phoneNumber;
+    #[Groups(['admin_api:read', 'owner:read', 'user_api:write'])]
+    private ?string $phoneNumber;
 
     public function __construct()
     {

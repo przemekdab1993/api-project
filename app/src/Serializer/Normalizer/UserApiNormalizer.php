@@ -10,7 +10,7 @@ use Symfony\Component\Serializer\Normalizer\NormalizerAwareInterface;
 use Symfony\Component\Serializer\Normalizer\NormalizerAwareTrait;
 
 
-class UserApiNormalizer implements ContextAwareNormalizerInterface , CacheableSupportsMethodInterface, NormalizerAwareInterface
+class UserApiNormalizer //implements ContextAwareNormalizerInterface , CacheableSupportsMethodInterface, NormalizerAwareInterface
 {
     private Security $security;
 

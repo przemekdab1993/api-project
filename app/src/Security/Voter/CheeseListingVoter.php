@@ -13,12 +13,10 @@ class CheeseListingVoter extends Voter
     public const EDIT = 'EDIT';
     public const VIEW = 'VIEW';
 
-    private Security $security;
-
-    public function __construct(Security $security)
-    {
-        $this->security = $security;
-    }
+    public function __construct(
+        private Security $security
+    )
+    {}
 
     protected function supports(string $attribute, $subject): bool
     {
