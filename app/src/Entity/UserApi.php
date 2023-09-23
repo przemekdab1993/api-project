@@ -64,7 +64,7 @@ class UserApi implements UserInterface, PasswordAuthenticatedUserInterface
     private string $email;
 
     #[ORM\Column(type: 'json')]
-    #[Groups(['admin_api:write'])]
+    #[Groups(['admin:write'])]
     private array $roles = [];
 
     #[ORM\Column(type: 'string')]
@@ -89,7 +89,7 @@ class UserApi implements UserInterface, PasswordAuthenticatedUserInterface
     private Collection $cheeseListings;
 
     #[ORM\Column(type: 'string', length: 255, nullable: true)]
-    #[Groups(['admin_api:read', 'owner:read', 'user_api:write'])]
+    #[Groups(['admin:read', 'user_api:write'])]
     private ?string $phoneNumber;
 
     public function __construct()

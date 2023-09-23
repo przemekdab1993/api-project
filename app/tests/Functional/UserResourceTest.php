@@ -36,12 +36,54 @@ class UserResourceTest extends CustomApiTestCase
         $client->request('PUT', '/api/user_apis/'.$user->getId(), [
             'json' => [
                 'userName' => 'Jarosław',
+                'roles' => ['ROLE_ADMIN']
             ]
         ]);
         $this->assertResponseIsSuccessful();
         $this->assertJsonContains([
             'userName' => 'Jarosław'
         ]);
+
+        $em = $this->getEntityManager();
+
+        /**
+         * @var $user UserApi
+         */
+        $user = $em->getRepository(UserApi::class)->find($user->getId());
+
+        $this->assertEquals(['ROLE_USER'], $user->getRoles());
     }
 
+    public function testGetUser()
+    {
+        $client = self::createClient();
+        $user = $this->createAndLoginUser($client, 'franek@example.com', 'qwerty');
+
+        $user->setPhoneNumber('201-203-245');
+        $em = $this->getEntityManager();
+        $em->flush();
+
+        $client->request('GET', '/api/user_apis/'.$user->getId());
+        $this->assertJsonContains([
+            'userName' => 'franek'
+        ]);
+
+        $data = $client->getResponse()->toArray();
+        $this->assertArrayNotHasKey('phoneNumber', $data);
+
+        /**
+         * @var $user UserApi
+         */
+        $user = $em->getRepository(UserApi::class)->find($user->getId());
+        $user->setRoles(['ROLE_ADMIN']);
+        $em->flush();
+
+        $this->userLogin($client, 'franek@example.com', 'qwerty');
+
+        $client->request('GET', '/api/user_apis/'.$user->getId());
+        $this->assertJsonContains([
+            'phoneNumber' => '201-203-245'
+        ]);
+
+    }
 }
