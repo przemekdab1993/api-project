@@ -21,7 +21,6 @@ use Symfony\Component\Validator\Constraints\Valid;
 #[ApiResource(
     collectionOperations: [
         'get' => [
-
         ],
         'post' => [
             'access_control' => 'is_granted("ROLE_USER")'
@@ -73,7 +72,7 @@ class CheeseListing
     private $id;
 
     #[ORM\Column(type: 'string', length: 255)]
-    #[Groups(['cheese:read', 'cheese:write', 'user_apis:read', 'user_apis:write'])]
+    #[Groups(['cheese:read', 'cheese:write', 'user_api:read', 'user_api:write'])]
     #[NotBlank]
     #[Length(
         min: 2,
@@ -88,7 +87,7 @@ class CheeseListing
     private $description;
 
     #[ORM\Column(type: 'integer')]
-    #[Groups(['cheese:read', 'cheese:write', 'user_apis:read', 'user_apis:write'])]
+    #[Groups(['cheese:read', 'cheese:write', 'user_api:read', 'user_api:write'])]
     #[NotBlank]
     private $price;
 
@@ -99,7 +98,7 @@ class CheeseListing
     private $isPublished = false;
 
     #[ORM\Column(type: 'integer')]
-    #[Groups(['cheese:read', 'cheese:write', 'user_apis:read', 'user_apis:write'])]
+    #[Groups(['cheese:read', 'cheese:write', 'user_api:read', 'user_api:write'])]
     #[NotBlank]
     private $quantity;
 
