@@ -87,7 +87,7 @@ class UserApi implements UserInterface, PasswordAuthenticatedUserInterface
     private Collection $cheeseListings;
 
     #[ORM\Column(type: 'string', length: 255, nullable: true)]
-    #[Groups(['admin:read', 'user_api:write'])]
+    #[Groups(['admin:read', 'owner:read', 'user_api:write'])]
     private ?string $phoneNumber;
 
     public function __construct()
