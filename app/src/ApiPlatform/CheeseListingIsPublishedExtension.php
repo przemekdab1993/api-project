@@ -13,15 +13,10 @@ use Symfony\Component\Security\Core\Security;
 
 class CheeseListingIsPublishedExtension implements QueryCollectionExtensionInterface, QueryItemExtensionInterface
 {
-
-    private $security;
-
-    public function __construct(Security $security)
-    {
-
-        $this->security = $security;
+    public function __construct(
+        private Security $security
+    ) {
     }
-
 
     private function addWhere(string $resourceClass, QueryBuilder $queryBuilder): void
     {
@@ -29,15 +24,21 @@ class CheeseListingIsPublishedExtension implements QueryCollectionExtensionInter
             return;
         }
 
-//        if ($this->security->isGranted('ROLE_ADMIN')) {
-//            return;
-//        }
+        if ($this->security->isGranted('ROLE_ADMIN')) {
+            return;
+        }
 
-//        $rootAlias = $queryBuilder->getRootAliases()[0];
-//        $queryBuilder->andWhere(sprintf('%s.isPublished = :isPublished', $rootAlias))
-//            ->setParameter(':isPublished', true);
+        $rootAlias = $queryBuilder->getRootAliases()[0];
+        if (!$this->security->getUser()) {
+            $queryBuilder->andWhere(sprintf('%s.isPublished = :isPublished', $rootAlias))
+                ->setParameter(':isPublished', true);
+        } else {
+            $queryBuilder->andWhere(sprintf(
+                '%s.isPublished = :isPublished AND %s.owner = :owner', $rootAlias, $rootAlias))
+                ->setParameter(':isPublished', true)
+                ->setParameter(':owner', $this->security->getUser()->getId());
+        }
     }
-
 
     public function applyToCollection(QueryBuilder $queryBuilder, QueryNameGeneratorInterface $queryNameGenerator, string $resourceClass, string $operationName = null)
     {
