@@ -21,7 +21,6 @@ use Symfony\Component\Validator\Constraints\Valid;
 #[ApiResource(
     collectionOperations: [
         'get' => [
-
         ],
         'post' => [
             'access_control' => 'is_granted("ROLE_USER")'
@@ -34,7 +33,8 @@ use Symfony\Component\Validator\Constraints\Valid;
             ]
         ],
         'put' => [
-            'access_control' => 'is_granted("EDIT", previous_object) ',
+            'access_control' => 'is_granted("EDIT", previous_object)',
+            'access_control_message' => 'Only the creator can edit a cheeseListing'
         ],
         'delete' => [
             'access_control' => 'is_granted("ROLE_ADMIN")'
@@ -82,7 +82,7 @@ class CheeseListing
     private $title;
 
     #[ORM\Column(type: 'text')]
-    #[Groups(['cheese:read', 'user_api:read'])]
+    #[Groups(['cheese:read', 'user_apis:read'])]
     #[NotBlank]
     private $description;
 
@@ -106,6 +106,7 @@ class CheeseListing
     #[ORM\JoinColumn(nullable: false)]
     #[Groups(['cheese:read', 'cheese:collection:post'])]
     #[IsValidOwner]
+    //#[NotBlank]
     private $owner;
 
 
@@ -125,12 +126,12 @@ class CheeseListing
         return $this->title;
     }
 
-//    public function setTitle(string $title): self
-//    {
-//        $this->title = $title;
-//
-//        return $this;
-//    }
+    public function setTitle(string $title): self
+    {
+        $this->title = $title;
+
+        return $this;
+    }
 
     public function getDescription(): ?string
     {

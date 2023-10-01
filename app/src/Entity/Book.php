@@ -11,6 +11,7 @@ use ApiPlatform\Core\Serializer\Filter\PropertyFilter;
 use App\Repository\BookRepository;
 use Carbon\Carbon;
 use Doctrine\ORM\Mapping as ORM;
+use phpDocumentor\Reflection\Types\Boolean;
 use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Serializer\Annotation\SerializedName;
 use Symfony\Component\Validator\Constraints\Length;
@@ -73,7 +74,7 @@ class Book
         max: 40,
         maxMessage: "Describe your book in 40 chars or less."
     )]
-    private $title;
+    private string $title;
 
 
     #[ORM\Column(type: 'text', nullable: true)]
@@ -83,7 +84,7 @@ class Book
         "author:write"
     ])]
     #[NotBlank]
-    private $description;
+    private string $description;
 
 
     #[ORM\Column(type: 'integer')]
@@ -93,7 +94,7 @@ class Book
         "author:write"
     ])]
     #[NotBlank]
-    private $price;
+    private int $price;
 
 
     #[ORM\Column(type: 'datetime')]
@@ -104,7 +105,6 @@ class Book
     #[Groups(["book:read"])]
     private $isPublished = false;
 
-
     #[ORM\Column(type: 'integer')]
     #[Groups([
         "book:read",
@@ -112,8 +112,7 @@ class Book
         "author:write"
     ])]
     #[NotBlank]
-    private $quantity;
-
+    private int $quantity;
 
     #[ORM\ManyToOne(targetEntity: Author::class, inversedBy: 'books')]
     #[ORM\JoinColumn(nullable: false)]
@@ -124,8 +123,6 @@ class Book
     ])]
     #[Valid]
     private $author;
-
-    
 
     public function __construct(string $title = null)
     {

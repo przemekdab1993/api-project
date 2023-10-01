@@ -10,18 +10,16 @@ use Symfony\Component\Serializer\Normalizer\NormalizerAwareInterface;
 use Symfony\Component\Serializer\Normalizer\NormalizerAwareTrait;
 
 
-class UserApiNormalizer implements ContextAwareNormalizerInterface , CacheableSupportsMethodInterface, NormalizerAwareInterface
+class UserApiNormalizer implements ContextAwareNormalizerInterface, CacheableSupportsMethodInterface, NormalizerAwareInterface
 {
-    private Security $security;
-
-    public function __construct(Security $security)
-    {
-        $this->security = $security;
-    }
-
     use NormalizerAwareTrait;
 
     private const ALREADY_CALLED = 'USER_NORMALIZER_ALREADY_CALLED';
+
+    public function __construct(
+        private Security $security
+    ) {
+    }
 
     /**
      * @param UserApi $object
@@ -37,13 +35,14 @@ class UserApiNormalizer implements ContextAwareNormalizerInterface , CacheableSu
         $context[self::ALREADY_CALLED] = true;
 
         $data = $this->normalizer->normalize($object, $format, $context);
-
-        // Here: add, edit, or delete some data
         $data['isMe'] = $isOwner;
 
         return $data;
     }
 
+    /**
+     * @param UserApi $data
+     */
     public function supportsNormalization($data, $format = null, array $context = []): bool
     {
         if (isset($context[self::ALREADY_CALLED])) {

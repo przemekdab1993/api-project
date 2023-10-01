@@ -53,38 +53,42 @@ class UserApi implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column(type: 'integer')]
-    private $id;
+    private int $id;
 
+    #[Email]
+    #[NotBlank]
     #[ORM\Column(type: 'string', length: 180, unique: true)]
     #[Groups(['user_api:read', 'user_api:write', 'cheese:item:get'])]
-    #[NotBlank]
-    #[Email]
-    private $email;
+    private string $email;
 
     #[ORM\Column(type: 'json')]
-    #[Groups(['admin_api:write'])]
-    private $roles = [];
+    #[Groups(['admin:write'])]
+    private array $roles = [];
 
     #[ORM\Column(type: 'string')]
-    private $password;
+    private string $password;
 
     #[Groups(['user_api:write'])]
     #[NotBlank(groups: ['create'])]
     private $plainPassword;
 
-    #[ORM\Column(type: 'string', length: 255, unique: true)]
-    #[Groups(['user_api:read', 'user_api:write', 'cheese:item:get'])]
     #[NotBlank]
-    private $userName;
+    #[ORM\Column(type: 'string', length: 255, unique: true)]
+    #[Groups([
+        'user_api:read', 'user_api:write',
+        'cheese:item:get',
+        'owner:read'
+    ])]
+    private ?string $userName;
 
-    #[ORM\OneToMany(mappedBy: 'owner', targetEntity: CheeseListing::class, cascade: ['persist'], orphanRemoval: true)]
-    #[Groups(['user_api:read', 'user_api:write'])]
     #[Valid]
-    private $cheeseListings;
+    #[ORM\OneToMany(mappedBy: 'owner', targetEntity: CheeseListing::class, cascade: ['persist'], orphanRemoval: true)]
+    #[Groups(['user_api:write'])]
+    private Collection $cheeseListings;
 
     #[ORM\Column(type: 'string', length: 255, nullable: true)]
-    #[Groups(['admin_api:read', 'owner:read', 'user_api:write'])]
-    private $phoneNumber;
+    #[Groups(['admin:read', 'owner:read', 'user_api:write'])]
+    private ?string $phoneNumber;
 
     public function __construct()
     {
@@ -160,6 +164,19 @@ class UserApi implements UserInterface, PasswordAuthenticatedUserInterface
         return $this;
     }
 
+    public function getPlainPassword(): ?string
+    {
+        return $this->plainPassword;
+    }
+
+    #[SerializedName('password')]
+    public function setPlainPassword(string $plainPassword): self
+    {
+        $this->plainPassword = $plainPassword;
+
+        return $this;
+    }
+
     /**
      * Returning a salt is only needed, if you are not using a modern
      * hashing algorithm (e.g. bcrypt or sodium) in your security.yaml.
@@ -195,6 +212,18 @@ class UserApi implements UserInterface, PasswordAuthenticatedUserInterface
         return $this->cheeseListings;
     }
 
+    /**
+     * @return Collection<int, CheeseListing>
+     */
+    #[Groups(['user_api:read'])]
+    #[SerializedName('cheeseListings')]
+    public function getPublishedCheeseListings(): Collection
+    {
+        return $this->cheeseListings->filter(function (CheeseListing $cheeseListing) {
+            return $cheeseListing->getIsPublished();
+        });
+    }
+
     public function addCheeseListing(CheeseListing $cheeseListing): self
     {
         if (!$this->cheeseListings->contains($cheeseListing)) {
@@ -213,19 +242,6 @@ class UserApi implements UserInterface, PasswordAuthenticatedUserInterface
                 $cheeseListing->setOwner(null);
             }
         }
-
-        return $this;
-    }
-
-    public function getPlainPassword(): ?string
-    {
-        return $this->plainPassword;
-    }
-
-    #[SerializedName('password')]
-    public function setPlainPassword(string $plainPassword): self
-    {
-        $this->plainPassword = $plainPassword;
 
         return $this;
     }

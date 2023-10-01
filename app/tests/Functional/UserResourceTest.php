@@ -10,85 +10,81 @@ class UserResourceTest extends CustomApiTestCase
 {
     use ReloadDatabaseTrait;
 
-    public function testCreateUser()
+
+    public function  testCreateUser()
     {
         $client = self::createClient();
 
         $client->request('POST', '/api/user_apis', [
             'json' => [
-                'email' => 'user@example.com',
-                'password' => 'string',
-                'userName' => 'userXD',
+                'email' => 'kreda@example.com',
+                'userName' => 'kreda',
+                'password' => 'kreda'
             ]
         ]);
 
         $this->assertResponseStatusCodeSame(201);
 
-        $this->logIn($client, 'user@example.com', 'string');
-
+        $this->userLogin($client, 'kreda@example.com', 'kreda');
     }
 
     public function testUpdateUser()
     {
         $client = self::createClient();
-
-        $user= $this->createUserAndLogIn($client, 'pola@gmail.com', 'duda');
+        $user = $this->createAndLoginUser($client, 'duda@example.com', 'Andrzej');
 
         $client->request('PUT', '/api/user_apis/'.$user->getId(), [
             'json' => [
-                'userName' => 'userXD',
-                'roles' => ['ROLE_ADMIN'], // will be ignored
+                'userName' => 'Jarosław',
+                'roles' => ['ROLE_ADMIN']
             ]
         ]);
-
         $this->assertResponseIsSuccessful();
         $this->assertJsonContains([
-            'userName' => 'userXD'
+            'userName' => 'Jarosław'
         ]);
 
         $em = $this->getEntityManager();
 
         /**
-         * @var UserApi $user
+         * @var $user UserApi
          */
         $user = $em->getRepository(UserApi::class)->find($user->getId());
 
         $this->assertEquals(['ROLE_USER'], $user->getRoles());
-
     }
 
     public function testGetUser()
     {
         $client = self::createClient();
-        $user = $this->createUser( 'ada@gmail.com', 'jajko');
+        $user = $this->createUser('franek@example.com', 'qwerty');
+        $this->createAndLoginUser($client, 'franeknietensam@example.com', 'qwerty');
 
-        $this->createUserAndLogIn($client, 'ada2@gmail.com', 'jajko2');
-
-        $user->setPhoneNumber('555-321-432');
+        $user->setPhoneNumber('201-203-245');
         $em = $this->getEntityManager();
         $em->flush();
 
         $client->request('GET', '/api/user_apis/'.$user->getId());
-
         $this->assertJsonContains([
-            'userName' => 'ada'
+            'userName' => 'franek'
         ]);
 
         $data = $client->getResponse()->toArray();
         $this->assertArrayNotHasKey('phoneNumber', $data);
 
-        // refresh the user &elevate
+        /**
+         * @var $user UserApi
+         */
         $user = $em->getRepository(UserApi::class)->find($user->getId());
         $user->setRoles(['ROLE_ADMIN']);
         $em->flush();
 
-        $this->logIn($client, 'ada@gmail.com', 'jajko');
+        $this->userLogin($client, 'franek@example.com', 'qwerty');
 
         $client->request('GET', '/api/user_apis/'.$user->getId());
-
         $this->assertJsonContains([
-            'phoneNumber' => '555-321-432'
+            'phoneNumber' => '201-203-245'
         ]);
-    }
 
+    }
 }

@@ -1,8 +1,6 @@
 <?php
 
-
 namespace App\ApiPlatform;
-
 
 use ApiPlatform\Core\Exception\ResourceClassNotFoundException;
 use ApiPlatform\Core\Metadata\Resource\Factory\ResourceMetadataFactoryInterface;
@@ -10,13 +8,10 @@ use ApiPlatform\Core\Metadata\Resource\ResourceMetadata;
 
 class AutoGroupResourceMetadataFactory implements ResourceMetadataFactoryInterface
 {
-
-    private $decorated;
-
-    public function __construct(ResourceMetadataFactoryInterface $decorated)
+    public function __construct(
+        private ResourceMetadataFactoryInterface $decorated
+    )
     {
-
-        $this->decorated = $decorated;
     }
 
     public function create(string $resourceClass): ResourceMetadata
@@ -35,7 +30,7 @@ class AutoGroupResourceMetadataFactory implements ResourceMetadataFactoryInterfa
         return $resourceMetadata;
     }
 
-    private function updateContextOnOperations(array $operations, string $shortName, bool $isItem)
+    private function updateContextOnOperations(array $operations, string $shortName, bool $isItem): array
     {
         foreach ($operations as $operationName => $operationOptions) {
             $operationOptions['normalization_context'] = $operationOptions['normalization_context'] ?? [];
@@ -54,7 +49,7 @@ class AutoGroupResourceMetadataFactory implements ResourceMetadataFactoryInterfa
         }
         return $operations;
     }
-    private function getDefaultGroups(string $shortName, bool $normalization, bool $isItem, string $operationName)
+    private function getDefaultGroups(string $shortName, bool $normalization, bool $isItem, string $operationName): array
     {
         $shortName = strtolower($shortName);
         $readOrWrite = $normalization ? 'read' : 'write';

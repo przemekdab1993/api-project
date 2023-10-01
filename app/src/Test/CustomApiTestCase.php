@@ -12,13 +12,13 @@ use Doctrine\ORM\EntityManagerInterface;
 class  CustomApiTestCase extends ApiTestCase
 {
 
-    protected function createUser(string $email, string $password):UserApi
+    protected function createUser(string $email, string $password): UserApi
     {
         $user = new UserApi();
         $user->setEmail($email);
         $user->setUserName(substr($email, 0, strpos($email, '@')));
 
-        $encoded = static::getContainer()->get('security.user_password_hasher')->hashPassword($user,  $password);
+        $encoded = static::getContainer()->get('security.user_password_hasher')->hashPassword($user, $password);
         $user->setPassword($encoded);
 
         $em = $this->getEntityManager();
@@ -28,14 +28,14 @@ class  CustomApiTestCase extends ApiTestCase
         return $user;
     }
 
-    protected function createUserAdmin(string $email, string $password):UserApi
+    protected function createUserAdmin(string $email, string $password): UserApi
     {
         $user = new UserApi();
         $user->setEmail($email);
         $user->setUserName(substr($email, 0, strpos($email, '@')));
-        $user->setRoles(["ROLE_ADMIN"]);
+        $user->setRoles(['USER_ADMIN']);
 
-        $encoded = static::getContainer()->get('security.user_password_hasher')->hashPassword($user,  $password);
+        $encoded = static::getContainer()->get('security.user_password_hasher')->hashPassword($user, $password);
         $user->setPassword($encoded);
 
         $em = $this->getEntityManager();
@@ -45,7 +45,7 @@ class  CustomApiTestCase extends ApiTestCase
         return $user;
     }
 
-    protected function logIn(Client $client, string $email, string $password)
+    protected function userLogin(Client $client, string $email, string $password)
     {
         $client->request('POST', '/login', [
             'headers' => [ 'Content-Type' => 'application/json'],
@@ -58,17 +58,19 @@ class  CustomApiTestCase extends ApiTestCase
         $this->assertResponseStatusCodeSame(204);
     }
 
-    protected function createUserAndLogIn(Client $client, string $email, string $password):UserApi
+    protected function createAndLoginUser(Client $client, string $email, string $password): UserApi
     {
         $user = $this->createUser($email, $password);
-
-        $this->logIn($client, $email, $password);
+        $this->userLogin($client, $email, $password);
 
         return $user;
+
+        $this->assertResponseStatusCodeSame(204);
     }
 
-    protected function getEntityManager():EntityManagerInterface
+    protected function getEntityManager(): EntityManagerInterface
     {
         return static::getContainer()->get('doctrine')->getManager();
     }
+
 }
