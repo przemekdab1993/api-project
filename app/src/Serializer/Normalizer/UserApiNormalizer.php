@@ -18,8 +18,7 @@ class UserApiNormalizer implements ContextAwareNormalizerInterface, CacheableSup
 
     public function __construct(
         private Security $security
-    )
-    {
+    ) {
     }
 
     /**

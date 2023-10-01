@@ -24,15 +24,33 @@ class CheesesListingResourceTest extends CustomApiTestCase
         $this->assertResponseStatusCodeSame(401);
 
 
-        $this->createAndLoginUser($client, 'ewelina@gmail.com', 'qwerty');
+        $user1 = $this->createAndLoginUser($client, 'ewelina@gmail.com', 'qwerty');
+        $user2 = $this->createUser('ewelina2@gmail.com', 'qwerty');
 
-        $this->assertResponseStatusCodeSame(204);
+        $cheeseData = [
+            "title" => "cheese suso uno pulto",
+            "price" => 2100,
+            "quantity" => 10,
+            "description" => "string"
+        ];
 
         $client->request('POST', 'api/cheeses', [
             'headers' => ['Content-Type' => 'application/json'],
-            'json' => []
+            'json' => $cheeseData
+        ]);
+        $this->assertResponseStatusCodeSame(201);
+
+        $client->request('POST', 'api/cheeses', [
+            'headers' => ['Content-Type' => 'application/json'],
+            'json' => $cheeseData + ["owner" => "/api/user_apis/".$user2->getId()]
         ]);
         $this->assertResponseStatusCodeSame(422);
+
+        $client->request('POST', 'api/cheeses', [
+            'headers' => ['Content-Type' => 'application/json'],
+            'json' => $cheeseData + ["owner" => "/api/user_apis/".$user1->getId()]
+        ]);
+        $this->assertResponseStatusCodeSame(201);
     }
 
     public function testUpdateCheeseListing()

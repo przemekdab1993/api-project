@@ -14,8 +14,8 @@ class UserDataPersister implements DataPersisterInterface
     public function __construct(
         private EntityManagerInterface $entityManager,
         private UserPasswordHasherInterface $userPasswordHasher
-    )
-    {}
+    ) {
+    }
 
 
     public function supports($data): bool
