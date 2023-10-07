@@ -53,7 +53,7 @@ class UserApi implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column(type: 'integer')]
-    private int $id;
+    private $id;
 
     #[Email]
     #[NotBlank]
@@ -120,6 +120,13 @@ class UserApi implements UserInterface, PasswordAuthenticatedUserInterface
     public function getUserIdentifier(): string
     {
         return (string) $this->email;
+    }
+
+    public function setUserName(string $userName): self
+    {
+        $this->userName = $userName;
+
+        return $this;
     }
 
     /**
@@ -195,13 +202,6 @@ class UserApi implements UserInterface, PasswordAuthenticatedUserInterface
     {
         // If you store any temporary, sensitive data on the user, clear it here
         $this->plainPassword = null;
-    }
-
-    public function setUserName(string $userName): self
-    {
-        $this->userName = $userName;
-
-        return $this;
     }
 
     /**
