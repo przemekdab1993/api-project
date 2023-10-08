@@ -3,6 +3,7 @@
 namespace App\Tests\Functional;
 
 use App\Entity\CheeseListing;
+use App\Entity\CheeseNotification;
 use App\Entity\UserApi;
 use App\Test\CustomApiTestCase;
 use Doctrine\ORM\EntityManager;
@@ -128,6 +129,19 @@ class CheesesListingResourceTest extends CustomApiTestCase
         $cheeseListing = $em->getRepository(CheeseListing::class)->find($cheeseListing->getId());
 
         $this->assertTrue($cheeseListing->getIsPublished());
+
+        $cheeseNotifications = $em->getRepository(CheeseNotification::class)->findBy(['cheeseListing' => $cheeseListing->getId()]);
+        $this->assertCount(1, $cheeseNotifications);
+
+        $client->request('PUT', 'api/cheeses/' . $cheeseListing->getId(), [
+            'headers' => ['Content-Type' => 'application/json'],
+            'json' => [
+                'isPublished' => true
+            ]
+        ]);
+
+        $cheeseNotifications = $em->getRepository(CheeseNotification::class)->findBy(['cheeseListing' => $cheeseListing->getId()]);
+        $this->assertCount(1, $cheeseNotifications);
     }
 
     public function testGetCheesesListingCollection()
