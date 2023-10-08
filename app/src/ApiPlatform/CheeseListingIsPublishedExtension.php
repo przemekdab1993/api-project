@@ -34,9 +34,12 @@ class CheeseListingIsPublishedExtension implements QueryCollectionExtensionInter
                 ->setParameter(':isPublished', true);
         } else {
             $queryBuilder->andWhere(sprintf(
-                '%s.isPublished = :isPublished AND %s.owner = :owner', $rootAlias, $rootAlias))
+                    '%s.isPublished = :isPublished 
+                    OR %s.owner = :owner',
+                $rootAlias, $rootAlias
+            ))
                 ->setParameter(':isPublished', true)
-                ->setParameter(':owner', $this->security->getUser()->getId());
+                ->setParameter(':owner', $this->security->getUser());
         }
     }
 

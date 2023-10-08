@@ -65,7 +65,7 @@ class CheesesListingResourceTest extends CustomApiTestCase
         $cheeseListing->setDescription('Jakiś opis');
         $cheeseListing->setPrice(1000);
         $cheeseListing->setQuantity(100);
-        $cheeseListing->setIsPublished(true);
+        $cheeseListing->setIsPublished(false);
 
         $entityManager = $this->getEntityManager();
         $entityManager->persist($cheeseListing);
@@ -93,6 +93,43 @@ class CheesesListingResourceTest extends CustomApiTestCase
         $this->assertResponseStatusCodeSame(200);
     }
 
+    public function testPublishCheeseListing()
+    {
+        $client = self::createClient();
+
+        $user = $this->createUser('inwa33@exemple.com', 'qwerty');
+
+        $cheeseListing = new CheeseListing('Boo cheese');
+        $cheeseListing->setOwner($user);
+        $cheeseListing->setDescription('Jakiś opis');
+        $cheeseListing->setPrice(1000);
+        $cheeseListing->setQuantity(100);
+        $cheeseListing->setIsPublished(false);
+
+        $entityManager = $this->getEntityManager();
+        $entityManager->persist($cheeseListing);
+        $entityManager->flush();
+
+        $this->userLogin($client, 'inwa33@exemple.com', 'qwerty');
+
+        $client->request('PUT', 'api/cheeses/' . $cheeseListing->getId(), [
+            'headers' => ['Content-Type' => 'application/json'],
+            'json' => [
+                'isPublished' => true
+            ]
+        ]);
+        $this->assertResponseStatusCodeSame(200);
+
+        $em = $this->getEntityManager();
+
+        /**
+         * @var $cheeseListing CheeseListing
+         */
+        $cheeseListing = $em->getRepository(CheeseListing::class)->find($cheeseListing->getId());
+
+        $this->assertTrue($cheeseListing->getIsPublished());
+    }
+
     public function testGetCheesesListingCollection()
     {
         $client = self::createClient();
@@ -103,6 +140,7 @@ class CheesesListingResourceTest extends CustomApiTestCase
         $cheeseListing1->setDescription('Jakiś opis');
         $cheeseListing1->setPrice(1000);
         $cheeseListing1->setQuantity(100);
+        $cheeseListing1->setIsPublished(false);
 
         $cheeseListing2 = new CheeseListing('Boo cheese 2');
         $cheeseListing2->setOwner($user);
@@ -145,7 +183,7 @@ class CheesesListingResourceTest extends CustomApiTestCase
         $em->flush();
 
         $client->request('GET', '/api/cheeses/'.$cheeseListing->getId(), []);
-        $this->assertResponseStatusCodeSame(404);
+        $this->assertResponseStatusCodeSame(200);
 
         $client->request('GET', '/api/user_apis/'.$user->getId(), []);
 

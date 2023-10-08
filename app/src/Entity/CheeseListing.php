@@ -9,6 +9,8 @@ use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\RangeFilter;
 use ApiPlatform\Core\Serializer\Filter\PropertyFilter;
 use ApiPlatform\Core\Annotation\ApiResource;
 use App\Validator\IsValidOwner;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Serializer\Annotation\SerializedName;
 use App\Repository\CheeseListingRepository;
@@ -82,7 +84,7 @@ class CheeseListing
     private $title;
 
     #[ORM\Column(type: 'text')]
-    #[Groups(['cheese:read', 'user_apis:read'])]
+    #[Groups(['cheese:read', 'user_api:read'])]
     #[NotBlank]
     private $description;
 
@@ -95,6 +97,7 @@ class CheeseListing
     private $createdAt;
 
     #[ORM\Column(type: 'boolean')]
+    #[Groups(['cheese:write'])]
     private $isPublished = false;
 
     #[ORM\Column(type: 'integer')]
@@ -109,11 +112,15 @@ class CheeseListing
     //#[NotBlank]
     private $owner;
 
+    #[ORM\OneToMany(mappedBy: 'cheeseListing', targetEntity: CheeseNotification::class)]
+    private $cheeseNotifications;
+
 
     public function __construct(string $title = null)
     {
         $this->createdAt = new \DateTimeImmutable();
         $this->title = $title;
+        $this->cheeseNotifications = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -220,6 +227,36 @@ class CheeseListing
     public function setOwner(?UserApi $owner): self
     {
         $this->owner = $owner;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, CheeseNotification>
+     */
+    public function getCheeseNotifications(): Collection
+    {
+        return $this->cheeseNotifications;
+    }
+
+    public function addCheeseNotification(CheeseNotification $cheeseNotification): self
+    {
+        if (!$this->cheeseNotifications->contains($cheeseNotification)) {
+            $this->cheeseNotifications[] = $cheeseNotification;
+            $cheeseNotification->setCheeseListing($this);
+        }
+
+        return $this;
+    }
+
+    public function removeCheeseNotification(CheeseNotification $cheeseNotification): self
+    {
+        if ($this->cheeseNotifications->removeElement($cheeseNotification)) {
+            // set the owning side to null (unless already changed)
+            if ($cheeseNotification->getCheeseListing() === $this) {
+                $cheeseNotification->setCheeseListing(null);
+            }
+        }
 
         return $this;
     }
