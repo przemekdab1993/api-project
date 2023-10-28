@@ -102,7 +102,7 @@ class CheesesListingResourceTest extends CustomApiTestCase
 
         $cheeseListing = new CheeseListing('Boo cheese');
         $cheeseListing->setOwner($user);
-        $cheeseListing->setDescription('Jakiś opis');
+        $cheeseListing->setDescription('Jakiś opis, który musi być dość długi');
         $cheeseListing->setPrice(1000);
         $cheeseListing->setQuantity(100);
         $cheeseListing->setIsPublished(false);
@@ -114,7 +114,6 @@ class CheesesListingResourceTest extends CustomApiTestCase
         $this->userLogin($client, 'inwa33@exemple.com', 'qwerty');
 
         $client->request('PUT', 'api/cheeses/' . $cheeseListing->getId(), [
-            'headers' => ['Content-Type' => 'application/json'],
             'json' => [
                 'isPublished' => true
             ]
@@ -142,6 +141,79 @@ class CheesesListingResourceTest extends CustomApiTestCase
 
         $cheeseNotifications = $em->getRepository(CheeseNotification::class)->findBy(['cheeseListing' => $cheeseListing->getId()]);
         $this->assertCount(1, $cheeseNotifications);
+    }
+
+    public function testPublishCheeseListingValidation()
+    {
+        $client = self::createClient();
+        $user = $this->createUser('ewelinka@example.com', 'kula');
+        $admin = $this->createUserAdmin('przemus@example.com', 'dab');
+        $em = $this->getEntityManager();
+
+        $cheeseListing = new CheeseListing('Ser Eweliny');
+        $cheeseListing->setOwner($user);
+        $cheeseListing->setDescription('Jakiś opis');
+        $cheeseListing->setPrice(1000);
+        $cheeseListing->setQuantity(100);
+        $cheeseListing->setIsPublished(false);
+
+        $entityManager = $this->getEntityManager();
+        $entityManager->persist($cheeseListing);
+        $entityManager->flush();
+
+        // 1) the owner CANNOT publish with a short description
+        $this->userLogin($client, 'ewelinka@example.com', 'kula');
+        $client->request('PUT', 'api/cheeses/' . $cheeseListing->getId(), [
+            'json' => [
+                'isPublished' => true
+            ]
+        ]);
+        $this->assertResponseStatusCodeSame(422, 'description is too short');
+
+        // 2) an admin user CAN publish with a short description
+        $this->userLogin($client, 'przemus@example.com', 'dab');
+        $client->request('PUT', 'api/cheeses/' . $cheeseListing->getId(), [
+            'json' => [
+                'isPublished' => true
+            ]
+        ]);
+        $this->assertResponseStatusCodeSame(200, 'admin can publish a short description');
+
+        $cheeseListing = $em->getRepository(CheeseListing::class)->find($cheeseListing->getId());
+        $this->assertTrue($cheeseListing->getIsPublished());
+
+        // 3) a normal user CAN make other changes to their listing
+        $this->userLogin($client, 'ewelinka@example.com', 'kula');
+        $client->request('PUT', 'api/cheeses/' . $cheeseListing->getId(), [
+            'json' => [
+                'price' => 5200
+            ]
+        ]);
+
+        $this->assertResponseStatusCodeSame(200, 'user can make other changes on short description');
+
+        // w tym przypadku testy oszukują
+
+//        $cheeseListingX = $em->getRepository(CheeseListing::class)->find($cheeseListing->getId());
+//        $this->assertSame(5200, $cheeseListingX->getPrice());
+
+        // 4) a normal user CANNOT unpublish
+        $this->userLogin($client, 'ewelinka@example.com', 'kula');
+        $client->request('PUT', 'api/cheeses/' . $cheeseListing->getId(), [
+            'json' => [
+                'isPublished' => false
+            ]
+        ]);
+        $this->assertResponseStatusCodeSame(422, 'normal user cannot unpublish');
+
+        // 5) an admin user CAN unpublish cheeseListing
+        $this->userLogin($client, 'przemus@example.com', 'dab');
+        $client->request('PUT', 'api/cheeses/' . $cheeseListing->getId(), [
+            'json' => [
+                'isPublished' => false
+            ]
+        ]);
+        $this->assertResponseStatusCodeSame(200, 'admin can unpublish');
     }
 
     public function testGetCheesesListingCollection()

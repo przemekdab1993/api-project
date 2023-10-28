@@ -33,7 +33,7 @@ class  CustomApiTestCase extends ApiTestCase
         $user = new UserApi();
         $user->setEmail($email);
         $user->setUserName(substr($email, 0, strpos($email, '@')));
-        $user->setRoles(['USER_ADMIN']);
+        $user->setRoles(['ROLE_ADMIN']);
 
         $encoded = static::getContainer()->get('security.user_password_hasher')->hashPassword($user, $password);
         $user->setPassword($encoded);

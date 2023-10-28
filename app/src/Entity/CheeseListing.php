@@ -9,6 +9,7 @@ use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\RangeFilter;
 use ApiPlatform\Core\Serializer\Filter\PropertyFilter;
 use ApiPlatform\Core\Annotation\ApiResource;
 use App\Validator\IsValidOwner;
+use App\Validator\ValidIsPublished;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Symfony\Component\Serializer\Annotation\Groups;
@@ -65,6 +66,7 @@ use Symfony\Component\Validator\Constraints\Valid;
 #[ApiFilter(PropertyFilter::class)]
 #[ORM\Entity(repositoryClass: CheeseListingRepository::class)]
 #[ORM\EntityListeners(['App\Doctrine\CheeseListingSetOwnerListener'])]
+#[ValidIsPublished]
 class CheeseListing
 {
     #[ORM\Id]

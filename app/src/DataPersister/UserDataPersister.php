@@ -43,7 +43,6 @@ class UserDataPersister implements ContextAwareDataPersisterInterface
         }
 
         $data->eraseCredentials();
-
         $this->decoratedDataPersister->persist($data);
     }
 
