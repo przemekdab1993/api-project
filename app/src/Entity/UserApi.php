@@ -90,6 +90,9 @@ class UserApi implements UserInterface, PasswordAuthenticatedUserInterface
     #[Groups(['admin:read', 'owner:read', 'user_api:write'])]
     private ?string $phoneNumber;
 
+    #[Groups(['user_api:read'])]
+    private bool $isMe;
+
     public function __construct()
     {
         $this->cheeseListings = new ArrayCollection();
@@ -256,5 +259,18 @@ class UserApi implements UserInterface, PasswordAuthenticatedUserInterface
         $this->phoneNumber = $phoneNumber;
 
         return $this;
+    }
+
+    public function getIsMe(): bool
+    {
+        if ($this->isMe === null) {
+            throw new \LogicException('This isMy field has not been initialized');
+        }
+        return $this->isMe;
+    }
+
+    public function setIsMe(bool $isMe): void
+    {
+        $this->isMe = $isMe;
     }
 }

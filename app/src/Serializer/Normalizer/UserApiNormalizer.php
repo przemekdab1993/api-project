@@ -31,13 +31,9 @@ class UserApiNormalizer implements ContextAwareNormalizerInterface, CacheableSup
         if ($isOwner) {
             $context['groups'][] = 'owner:read';
         }
-
         $context[self::ALREADY_CALLED] = true;
 
-        $data = $this->normalizer->normalize($object, $format, $context);
-        $data['isMe'] = $isOwner;
-
-        return $data;
+        return $this->normalizer->normalize($object, $format, $context);
     }
 
     /**

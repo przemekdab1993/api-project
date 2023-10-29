@@ -65,6 +65,7 @@ class UserResourceTest extends CustomApiTestCase
         $em->flush();
 
         $client->request('GET', '/api/user_apis/'.$user->getId());
+        $this->assertResponseStatusCodeSame(200);
         $this->assertJsonContains([
             'userName' => 'franek'
         ]);
@@ -83,7 +84,7 @@ class UserResourceTest extends CustomApiTestCase
 
         $client->request('GET', '/api/user_apis/'.$user->getId());
         $this->assertJsonContains([
-            'phoneNumber' => '201-203-245'
+            'isMe' => true
         ]);
 
     }
