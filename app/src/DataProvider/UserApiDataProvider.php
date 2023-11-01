@@ -33,7 +33,8 @@ class UserApiDataProvider implements ContextAwareCollectionDataProviderInterface
         $currentUser = $this->security->getUser();
 
         foreach ($users as $user) {
-            $user->setIsMe($user === $currentUser);
+            // now handled listener
+            // $user->setIsMe($user === $currentUser);
         }
         return $users;
     }
@@ -52,7 +53,8 @@ class UserApiDataProvider implements ContextAwareCollectionDataProviderInterface
            return null;
         }
 
-        $item->setIsMe($this->security->getUser() === $item);
+        // now handled listener
+        // $item->setIsMe($this->security->getUser() === $item);
 
         return $item;
     }

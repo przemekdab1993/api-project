@@ -91,7 +91,7 @@ class UserApi implements UserInterface, PasswordAuthenticatedUserInterface
     private ?string $phoneNumber;
 
     #[Groups(['user_api:read'])]
-    private bool $isMe;
+    private bool $isMe = false;
 
     public function __construct()
     {
@@ -263,9 +263,6 @@ class UserApi implements UserInterface, PasswordAuthenticatedUserInterface
 
     public function getIsMe(): bool
     {
-        if ($this->isMe === null) {
-            throw new \LogicException('This isMy field has not been initialized');
-        }
         return $this->isMe;
     }
 
