@@ -48,6 +48,7 @@ use Symfony\Component\Validator\Constraints\Valid;
 #[ApiFilter(PropertyFilter::class)]
 #[UniqueEntity(fields: ['userName'])]
 #[UniqueEntity(fields: ['email'])]
+#[ORM\EntityListeners(['App\Doctrine\UserSetIsMvpListener'])]
 class UserApi implements UserInterface, PasswordAuthenticatedUserInterface
 {
     #[ORM\Id]
@@ -92,6 +93,11 @@ class UserApi implements UserInterface, PasswordAuthenticatedUserInterface
 
     #[Groups(['user_api:read'])]
     private bool $isMe = false;
+
+    #[Groups(['user_api:read'])]
+    private bool $isMvp = false;
+
+
 
     public function __construct()
     {
@@ -269,5 +275,15 @@ class UserApi implements UserInterface, PasswordAuthenticatedUserInterface
     public function setIsMe(bool $isMe): void
     {
         $this->isMe = $isMe;
+    }
+
+    public function getIsMvp(): bool
+    {
+        return $this->isMvp;
+    }
+
+    public function setIsMvp(bool $isMvp): void
+    {
+        $this->isMvp = $isMvp;
     }
 }

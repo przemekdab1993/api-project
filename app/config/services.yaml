@@ -34,7 +34,10 @@ services:
         decoration_priority: -20
 
     App\Doctrine\CheeseListingSetOwnerListener:
-        tags: ['doctrine.orm.entity_listener']
+        tags: [ 'doctrine.orm.entity_listener' ]
+
+    App\Doctrine\UserSetIsMvpListener:
+        tags: [ 'doctrine.orm.entity_listener' ]
 
     App\DataPersister\UserDataPersister:
         bind:

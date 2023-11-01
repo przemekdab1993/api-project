@@ -61,13 +61,15 @@ class UserResourceTest extends CustomApiTestCase
         $this->createAndLoginUser($client, 'franeknietensam@example.com', 'qwerty');
 
         $user->setPhoneNumber('201-203-245');
+        $user->setUserName('cheesehead');
         $em = $this->getEntityManager();
         $em->flush();
 
         $client->request('GET', '/api/user_apis/'.$user->getId());
         $this->assertResponseStatusCodeSame(200);
         $this->assertJsonContains([
-            'userName' => 'franek'
+            'userName' => $user->getUserName(),
+            'isMvp' => true
         ]);
 
         $data = $client->getResponse()->toArray();
