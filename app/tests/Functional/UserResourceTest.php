@@ -15,7 +15,7 @@ class UserResourceTest extends CustomApiTestCase
     {
         $client = self::createClient();
 
-        $client->request('POST', '/api/user_apis', [
+        $client->request('POST', '/api/user-apis', [
             'json' => [
                 'email' => 'kreda@example.com',
                 'userName' => 'kreda',
@@ -33,7 +33,7 @@ class UserResourceTest extends CustomApiTestCase
         $client = self::createClient();
         $user = $this->createAndLoginUser($client, 'duda@example.com', 'Andrzej');
 
-        $client->request('PUT', '/api/user_apis/'.$user->getId(), [
+        $client->request('PUT', '/api/user-apis/'.$user->getId(), [
             'json' => [
                 'userName' => 'Jarosław',
                 'roles' => ['ROLE_ADMIN']
@@ -65,7 +65,7 @@ class UserResourceTest extends CustomApiTestCase
         $em = $this->getEntityManager();
         $em->flush();
 
-        $client->request('GET', '/api/user_apis/'.$user->getId());
+        $client->request('GET', '/api/user-apis/'.$user->getId());
         $this->assertResponseStatusCodeSame(200);
         $this->assertJsonContains([
             'userName' => $user->getUserName(),
@@ -84,7 +84,7 @@ class UserResourceTest extends CustomApiTestCase
 
         $this->userLogin($client, 'franek@example.com', 'qwerty');
 
-        $client->request('GET', '/api/user_apis/'.$user->getId());
+        $client->request('GET', '/api/user-apis/'.$user->getId());
         $this->assertJsonContains([
             'isMe' => true
         ]);

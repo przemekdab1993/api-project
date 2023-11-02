@@ -43,13 +43,13 @@ class CheesesListingResourceTest extends CustomApiTestCase
 
         $client->request('POST', 'api/cheeses', [
             'headers' => ['Content-Type' => 'application/json'],
-            'json' => $cheeseData + ["owner" => "/api/user_apis/".$user2->getId()]
+            'json' => $cheeseData + ["owner" => "/api/user-apis/".$user2->getId()]
         ]);
         $this->assertResponseStatusCodeSame(422);
 
         $client->request('POST', 'api/cheeses', [
             'headers' => ['Content-Type' => 'application/json'],
-            'json' => $cheeseData + ["owner" => "/api/user_apis/".$user1->getId()]
+            'json' => $cheeseData + ["owner" => "/api/user-apis/".$user1->getId()]
         ]);
         $this->assertResponseStatusCodeSame(201);
     }
@@ -271,7 +271,7 @@ class CheesesListingResourceTest extends CustomApiTestCase
         $client->request('GET', '/api/cheeses/'.$cheeseListing->getId(), []);
         $this->assertResponseStatusCodeSame(200);
 
-        $client->request('GET', '/api/user_apis/'.$user->getId(), []);
+        $client->request('GET', '/api/user-apis/'.$user->getId(), []);
 
         $data = $client->getResponse()->toArray();
         $this->assertEmpty($data['cheeseListings']);

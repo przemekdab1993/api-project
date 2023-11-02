@@ -40,9 +40,9 @@ use Symfony\Component\Validator\Constraints\Valid;
             'access_control' => 'is_granted("ROLE_ADMIN")',
         ]
     ],
-    shortName: 'user_api',
-    denormalizationContext: ['groups' => ['user_api:write']],
-    normalizationContext: ['groups' => ['user_api:read']]
+    shortName: 'user-api',
+    denormalizationContext: ['groups' => ['user-api:write']],
+    normalizationContext: ['groups' => ['user-api:read']]
 
 )]
 #[ApiFilter(PropertyFilter::class)]
@@ -59,7 +59,7 @@ class UserApi implements UserInterface, PasswordAuthenticatedUserInterface
     #[Email]
     #[NotBlank]
     #[ORM\Column(type: 'string', length: 180, unique: true)]
-    #[Groups(['user_api:read', 'user_api:write', 'cheese:item:get'])]
+    #[Groups(['user-api:read', 'user-api:write', 'cheese:item:get'])]
     private string $email;
 
     #[ORM\Column(type: 'json')]
@@ -69,14 +69,14 @@ class UserApi implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Column(type: 'string')]
     private string $password;
 
-    #[Groups(['user_api:write'])]
+    #[Groups(['user-api:write'])]
     #[NotBlank(groups: ['create'])]
     private $plainPassword;
 
     #[NotBlank]
     #[ORM\Column(type: 'string', length: 255, unique: true)]
     #[Groups([
-        'user_api:read', 'user_api:write',
+        'user-api:read', 'user-api:write',
         'cheese:item:get',
         'owner:read'
     ])]
@@ -84,17 +84,17 @@ class UserApi implements UserInterface, PasswordAuthenticatedUserInterface
 
     #[Valid]
     #[ORM\OneToMany(mappedBy: 'owner', targetEntity: CheeseListing::class, cascade: ['persist'], orphanRemoval: true)]
-    #[Groups(['user_api:write'])]
+    #[Groups(['user-api:write'])]
     private Collection $cheeseListings;
 
     #[ORM\Column(type: 'string', length: 255, nullable: true)]
-    #[Groups(['admin:read', 'owner:read', 'user_api:write'])]
+    #[Groups(['admin:read', 'owner:read', 'user-api:write'])]
     private ?string $phoneNumber;
 
-    #[Groups(['user_api:read'])]
+    #[Groups(['user-api:read'])]
     private bool $isMe = false;
 
-    #[Groups(['user_api:read'])]
+    #[Groups(['user-api:read'])]
     private bool $isMvp = false;
 
 
@@ -224,7 +224,7 @@ class UserApi implements UserInterface, PasswordAuthenticatedUserInterface
     /**
      * @return Collection<int, CheeseListing>
      */
-    #[Groups(['user_api:read'])]
+    #[Groups(['user-api:read'])]
     #[SerializedName('cheeseListings')]
     public function getPublishedCheeseListings(): Collection
     {

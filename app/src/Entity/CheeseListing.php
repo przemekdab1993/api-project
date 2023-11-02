@@ -76,7 +76,7 @@ class CheeseListing
     private $id;
 
     #[ORM\Column(type: 'string', length: 255)]
-    #[Groups(['cheese:read', 'cheese:write', 'user_api:read', 'user_api:write'])]
+    #[Groups(['cheese:read', 'cheese:write', 'user-api:read', 'user-api:write'])]
     #[NotBlank]
     #[Length(
         min: 2,
@@ -86,12 +86,12 @@ class CheeseListing
     private $title;
 
     #[ORM\Column(type: 'text')]
-    #[Groups(['cheese:read', 'user_api:read'])]
+    #[Groups(['cheese:read', 'user-api:read'])]
     #[NotBlank]
     private $description;
 
     #[ORM\Column(type: 'integer')]
-    #[Groups(['cheese:read', 'cheese:write', 'user_api:read', 'user_api:write'])]
+    #[Groups(['cheese:read', 'cheese:write', 'user-api:read', 'user-api:write'])]
     #[NotBlank]
     private $price;
 
@@ -103,7 +103,7 @@ class CheeseListing
     private $isPublished = false;
 
     #[ORM\Column(type: 'integer')]
-    #[Groups(['cheese:read', 'cheese:write', 'user_api:read', 'user_api:write'])]
+    #[Groups(['cheese:read', 'cheese:write', 'user-api:read', 'user-api:write'])]
     #[NotBlank]
     private $quantity;
 
@@ -164,7 +164,7 @@ class CheeseListing
         return $this;
     }
 
-    #[Groups(['cheese:write', 'user_api:write'])]
+    #[Groups(['cheese:write', 'user-api:write'])]
     #[SerializedName('description')]
     public function setTextDescription(string $description): self
     {
