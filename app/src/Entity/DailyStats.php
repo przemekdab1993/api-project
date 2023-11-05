@@ -36,6 +36,9 @@ class DailyStats
     #[Groups(['daily-stats:read'])]
     public int $totalVisitors;
 
+    /**
+     * @var array<CheeseListing> | CheeseListing[]
+     */
     #[Groups(['daily-stats:read'])]
     public $mostPopularListings = [];
 
