@@ -14,12 +14,7 @@ use Symfony\Component\Serializer\Annotation\Groups;
         'get',
     ],
     itemOperations: [
-        'get' => [
-            'method' => 'GET',
-            'controller' =>NotFoundAction::class,
-            'read' => false,
-            'output' => false
-        ]
+        'get'
     ],
     shortName: 'daily-stats',
     normalizationContext: [
