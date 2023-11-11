@@ -14,9 +14,15 @@ use Symfony\Component\Serializer\Annotation\Groups;
         'get',
     ],
     itemOperations: [
-        'get'
+        'get',
+        'put'
     ],
     shortName: 'daily-stats',
+    denormalizationContext: [
+        'groups' => [
+            'daily-stats:write'
+        ]
+    ],
     normalizationContext: [
         'groups' => [
             'daily-stats:read'
@@ -29,7 +35,7 @@ class DailyStats
     #[Groups(['daily-stats:read'])]
     public \DateTimeImmutable $date;
 
-    #[Groups(['daily-stats:read'])]
+    #[Groups(['daily-stats:read', 'daily-stats:write'])]
     public int $totalVisitors;
 
     /**
