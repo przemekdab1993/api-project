@@ -22,6 +22,7 @@ use Symfony\Component\Serializer\Annotation\Groups;
             'daily-stats:read'
         ]
     ],
+    paginationItemsPerPage: 5
 )]
 class DailyStats
 {
