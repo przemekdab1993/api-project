@@ -8,6 +8,7 @@ use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\SearchFilter;
 use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\RangeFilter;
 use ApiPlatform\Core\Serializer\Filter\PropertyFilter;
 use ApiPlatform\Core\Annotation\ApiResource;
+use App\ApiPlatform\CheeseListingSearchFilter;
 use App\Validator\IsValidOwner;
 use App\Validator\ValidIsPublished;
 use Doctrine\Common\Collections\ArrayCollection;
@@ -64,6 +65,7 @@ use Symfony\Component\Validator\Constraints\Valid;
 )]
 #[ApiFilter(RangeFilter::class, properties: ['price'])]
 #[ApiFilter(PropertyFilter::class)]
+#[ApiFilter(CheeseListingSearchFilter::class)]
 #[ORM\Entity(repositoryClass: CheeseListingRepository::class)]
 #[ORM\EntityListeners(['App\Doctrine\CheeseListingSetOwnerListener'])]
 #[ValidIsPublished]
