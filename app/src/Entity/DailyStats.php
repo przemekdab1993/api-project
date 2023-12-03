@@ -32,7 +32,7 @@ use Symfony\Component\Serializer\Annotation\Groups;
     ],
     paginationItemsPerPage: 5
 )]
-#[ApiFilter(DailyStatsDateFilter::class)]
+#[ApiFilter(DailyStatsDateFilter::class, arguments: ['throwOnInvalid' => true])]
 class DailyStats
 {
     #[Groups(['daily-stats:read'])]
