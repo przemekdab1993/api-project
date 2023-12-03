@@ -65,7 +65,7 @@ use Symfony\Component\Validator\Constraints\Valid;
 )]
 #[ApiFilter(RangeFilter::class, properties: ['price'])]
 #[ApiFilter(PropertyFilter::class)]
-#[ApiFilter(CheeseListingSearchFilter::class)]
+#[ApiFilter(CheeseListingSearchFilter::class, arguments: ["useLike" => true])]
 #[ORM\Entity(repositoryClass: CheeseListingRepository::class)]
 #[ORM\EntityListeners(['App\Doctrine\CheeseListingSetOwnerListener'])]
 #[ValidIsPublished]
