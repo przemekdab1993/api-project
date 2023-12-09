@@ -9,6 +9,7 @@ use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\RangeFilter;
 use ApiPlatform\Core\Serializer\Filter\PropertyFilter;
 use ApiPlatform\Core\Annotation\ApiResource;
 use App\ApiPlatform\CheeseListingSearchFilter;
+use App\Dto\CheeseListingOutput;
 use App\Validator\IsValidOwner;
 use App\Validator\ValidIsPublished;
 use Doctrine\Common\Collections\ArrayCollection;
@@ -20,7 +21,6 @@ use Carbon\Carbon;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Validator\Constraints\Length;
 use Symfony\Component\Validator\Constraints\NotBlank;
-use Symfony\Component\Validator\Constraints\Valid;
 
 #[ApiResource(
     collectionOperations: [
@@ -52,7 +52,8 @@ use Symfony\Component\Validator\Constraints\Valid;
         ]
     ],
     denormalizationContext: ['groups' => ['cheese:write']],
-    normalizationContext: ['groups' => ['cheese:read']]
+    normalizationContext: ['groups' => ['cheese:read']],
+    output: CheeseListingOutput::class
 )]
 #[ApiFilter(BooleanFilter::class, properties: ['isPublished'])]
 #[ApiFilter(
