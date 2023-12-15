@@ -24,7 +24,7 @@ class UserApiNormalizer implements ContextAwareNormalizerInterface, CacheableSup
     /**
      * @param UserApi $object
      */
-    public function normalize($object, $format = null, array $context = []): array
+    public function normalize($object, $format = null, array $context = []): array|string
     {
         $isOwner = $this->userIsOwner($object);
 

@@ -98,12 +98,12 @@ class Book
 
 
     #[ORM\Column(type: 'datetime')]
-    private $createdAt;
+    private \DateTimeImmutable $createdAt;
 
 
     #[ORM\Column(type: 'boolean')]
     #[Groups(["book:read"])]
-    private $isPublished = false;
+    private bool $isPublished = false;
 
     #[ORM\Column(type: 'integer')]
     #[Groups([
@@ -122,7 +122,7 @@ class Book
         "author:write"
     ])]
     #[Valid]
-    private $author;
+    private Author $author;
 
     public function __construct(string $title = null)
     {

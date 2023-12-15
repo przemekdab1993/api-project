@@ -32,9 +32,6 @@ use Symfony\Component\Validator\Constraints\NotBlank;
     ],
     itemOperations: [
         'get' => [
-            'normalization_context' => [
-                'groups'=> ['cheese:read', 'cheese:item:get']
-            ]
         ],
         'put' => [
             'access_control' => 'is_granted("EDIT", previous_object)',
@@ -52,7 +49,6 @@ use Symfony\Component\Validator\Constraints\NotBlank;
         ]
     ],
     denormalizationContext: ['groups' => ['cheese:write']],
-    normalizationContext: ['groups' => ['cheese:read']],
     output: CheeseListingOutput::class
 )]
 #[ApiFilter(BooleanFilter::class, properties: ['isPublished'])]
@@ -75,55 +71,53 @@ class CheeseListing
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column(type: 'integer')]
-    #[Groups('cheese:read')]
-    private $id;
+    private int $id;
 
     #[ORM\Column(type: 'string', length: 255)]
-    #[Groups(['cheese:read', 'cheese:write', 'user-api:read', 'user-api:write'])]
+    #[Groups(['cheese:write', 'user-api:write'])]
     #[NotBlank]
     #[Length(
         min: 2,
         max: 50,
         maxMessage: 'Describe your cheese in 50 chars or less'
     )]
-    private $title;
+    private ?string $title;
 
     #[ORM\Column(type: 'text')]
-    #[Groups(['cheese:read', 'user-api:read'])]
+    #[Groups(['user-api:read'])]
     #[NotBlank]
-    private $description;
+    private ?string $description;
 
     #[ORM\Column(type: 'integer')]
-    #[Groups(['cheese:read', 'cheese:write', 'user-api:read', 'user-api:write'])]
+    #[Groups(['cheese:write', 'user-api:write'])]
     #[NotBlank]
-    private $price;
+    private ?int $price;
 
     #[ORM\Column(type: 'datetime')]
-    private $createdAt;
+    private \DateTime $createdAt;
 
     #[ORM\Column(type: 'boolean')]
     #[Groups(['cheese:write'])]
-    private $isPublished = false;
+    private ?bool $isPublished = false;
 
     #[ORM\Column(type: 'integer')]
-    #[Groups(['cheese:read', 'cheese:write', 'user-api:read', 'user-api:write'])]
+    #[Groups(['cheese:write', 'user-api:write'])]
     #[NotBlank]
-    private $quantity;
+    private ?int $quantity;
 
     #[ORM\ManyToOne(targetEntity: UserApi::class, inversedBy: 'cheeseListings')]
     #[ORM\JoinColumn(nullable: false)]
-    #[Groups(['cheese:read', 'cheese:collection:post'])]
+    #[Groups(['cheese:collection:post'])]
     #[IsValidOwner]
-    //#[NotBlank]
     private $owner;
 
     #[ORM\OneToMany(mappedBy: 'cheeseListing', targetEntity: CheeseNotification::class)]
-    private $cheeseNotifications;
+    private Collection $cheeseNotifications;
 
 
     public function __construct(string $title = null)
     {
-        $this->createdAt = new \DateTimeImmutable();
+        $this->createdAt = new \DateTime();
         $this->title = $title;
         $this->cheeseNotifications = new ArrayCollection();
     }
@@ -148,16 +142,6 @@ class CheeseListing
     public function getDescription(): ?string
     {
         return $this->description;
-    }
-
-    #[Groups('cheese:read')]
-    public function getShortDescription(): ?string
-    {
-        if (strlen($this->description) < 40) {
-            return $this->description;
-        }
-
-        return substr($this->description, 0, 40).'...';
     }
 
     public function setDescription(string $description): self
@@ -188,16 +172,9 @@ class CheeseListing
         return $this;
     }
 
-    public function getCreatedAt(): ?\DateTimeInterface
+    public function getCreatedAt(): ?\DateTime
     {
         return $this->createdAt;
-    }
-
-
-    #[Groups('cheese:read')]
-    public function getCreatedAgo(): string
-    {
-        return Carbon::instance($this->getCreatedAt())->diffForHumans();
     }
 
     public function getIsPublished(): ?bool
@@ -229,7 +206,7 @@ class CheeseListing
         return $this->owner;
     }
 
-    public function setOwner(?UserApi $owner): self
+    public function setOwner(UserApi $owner): self
     {
         $this->owner = $owner;
 
