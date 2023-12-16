@@ -9,15 +9,13 @@ use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\RangeFilter;
 use ApiPlatform\Core\Serializer\Filter\PropertyFilter;
 use ApiPlatform\Core\Annotation\ApiResource;
 use App\ApiPlatform\CheeseListingSearchFilter;
+use App\Dto\CheeseListingInput;
 use App\Dto\CheeseListingOutput;
 use App\Validator\IsValidOwner;
 use App\Validator\ValidIsPublished;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
-use Symfony\Component\Serializer\Annotation\Groups;
-use Symfony\Component\Serializer\Annotation\SerializedName;
 use App\Repository\CheeseListingRepository;
-use Carbon\Carbon;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Validator\Constraints\Length;
 use Symfony\Component\Validator\Constraints\NotBlank;
@@ -49,6 +47,7 @@ use Symfony\Component\Validator\Constraints\NotBlank;
         ]
     ],
     denormalizationContext: ['groups' => ['cheese:write']],
+    input: CheeseListingInput::class,
     output: CheeseListingOutput::class
 )]
 #[ApiFilter(BooleanFilter::class, properties: ['isPublished'])]
@@ -74,7 +73,6 @@ class CheeseListing
     private int $id;
 
     #[ORM\Column(type: 'string', length: 255)]
-    #[Groups(['cheese:write', 'user-api:write'])]
     #[NotBlank]
     #[Length(
         min: 2,
@@ -84,12 +82,10 @@ class CheeseListing
     private ?string $title;
 
     #[ORM\Column(type: 'text')]
-    #[Groups(['user-api:read'])]
     #[NotBlank]
     private ?string $description;
 
     #[ORM\Column(type: 'integer')]
-    #[Groups(['cheese:write', 'user-api:write'])]
     #[NotBlank]
     private ?int $price;
 
@@ -97,17 +93,14 @@ class CheeseListing
     private \DateTime $createdAt;
 
     #[ORM\Column(type: 'boolean')]
-    #[Groups(['cheese:write'])]
     private ?bool $isPublished = false;
 
     #[ORM\Column(type: 'integer')]
-    #[Groups(['cheese:write', 'user-api:write'])]
     #[NotBlank]
     private ?int $quantity;
 
     #[ORM\ManyToOne(targetEntity: UserApi::class, inversedBy: 'cheeseListings')]
     #[ORM\JoinColumn(nullable: false)]
-    #[Groups(['cheese:collection:post'])]
     #[IsValidOwner]
     private $owner;
 
@@ -147,15 +140,6 @@ class CheeseListing
     public function setDescription(string $description): self
     {
         $this->description = $description;
-
-        return $this;
-    }
-
-    #[Groups(['cheese:write', 'user-api:write'])]
-    #[SerializedName('description')]
-    public function setTextDescription(string $description): self
-    {
-        $this->description = nl2br($description);
 
         return $this;
     }

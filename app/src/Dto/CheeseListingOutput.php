@@ -12,7 +12,7 @@ class CheeseListingOutput
     #[Groups(['cheese:read', 'user-api:read'])]
     public ?string $title;
 
-    #[Groups(['cheese:read'])]
+    #[Groups(['cheese:read', 'user-api:read'])]
     public ?string $description;
 
     #[Groups(['cheese:read', 'user-api:read'])]
