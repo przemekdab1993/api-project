@@ -10,21 +10,21 @@ use Symfony\Component\Serializer\Annotation\SerializedName;
 class CheeseListingInput
 {
     #[Groups(['cheese:write', 'user-api:write'])]
-    public ?string $title;
+    public ?string $title = null;
 
     #[Groups(['cheese:write', 'user-api:write'])]
-    public ?int $price;
+    public ?int $price = 0;
 
     #[Groups(['cheese:write'])]
     public ?bool $isPublished = false;
 
     #[Groups(['cheese:write', 'user-api:write'])]
-    public ?int $quantity;
+    public ?int $quantity = 0;
 
     #[Groups(['cheese:collection:post'])]
-    public UserApi $owner;
+    public ?UserApi $owner = null;
 
-    public string $description;
+    public ?string $description = null;
 
     #[Groups(['cheese:write', 'user-api:write'])]
     #[SerializedName('description')]
