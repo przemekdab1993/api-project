@@ -10,6 +10,8 @@ use App\Repository\UserApiRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use Ramsey\Uuid\Uuid;
+use Ramsey\Uuid\UuidInterface;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
@@ -55,7 +57,12 @@ class UserApi implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column(type: 'integer')]
+    #[ApiProperty(identifier: false)]
     private $id;
+
+    #[ORM\Column(type: 'uuid', unique: true)]
+    #[ApiProperty(identifier: true)]
+    private UuidInterface $uuid;
 
     #[Email]
     #[NotBlank]
@@ -103,11 +110,17 @@ class UserApi implements UserInterface, PasswordAuthenticatedUserInterface
     public function __construct()
     {
         $this->cheeseListings = new ArrayCollection();
+        $this->uuid = Uuid::uuid4();
     }
 
     public function getId(): ?int
     {
         return $this->id;
+    }
+
+    public function getUuId(): ?UuidInterface
+    {
+        return $this->uuid;
     }
 
     public function getEmail(): ?string

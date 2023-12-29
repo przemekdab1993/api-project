@@ -3,13 +3,13 @@
 namespace App\Tests\Functional;
 
 use App\Entity\UserApi;
+use App\Repository\UserApiRepository;
 use App\Test\CustomApiTestCase;
 use Hautelook\AliceBundle\PhpUnit\ReloadDatabaseTrait;
 
 class UserResourceTest extends CustomApiTestCase
 {
     use ReloadDatabaseTrait;
-
 
     public function  testCreateUser()
     {
@@ -25,6 +25,13 @@ class UserResourceTest extends CustomApiTestCase
 
         $this->assertResponseStatusCodeSame(201);
 
+        $em = $this->getEntityManager();
+        $user = $em->getRepository(UserApi::class)->findOneBy(['email' => 'kreda@example.com']);
+        $this->assertNotNull($user);
+        $this->assertJsonContains([
+            '@id' => '/api/user-apis/'.$user->getUuid()->toString()
+        ]);
+
         $this->userLogin($client, 'kreda@example.com', 'kreda');
     }
 
@@ -33,7 +40,7 @@ class UserResourceTest extends CustomApiTestCase
         $client = self::createClient();
         $user = $this->createAndLoginUser($client, 'duda@example.com', 'Andrzej');
 
-        $client->request('PUT', '/api/user-apis/'.$user->getId(), [
+        $client->request('PUT', '/api/user-apis/'.$user->getUuId(), [
             'json' => [
                 'userName' => 'Jarosław',
                 'roles' => ['ROLE_ADMIN']
@@ -65,7 +72,7 @@ class UserResourceTest extends CustomApiTestCase
         $em = $this->getEntityManager();
         $em->flush();
 
-        $client->request('GET', '/api/user-apis/'.$user->getId());
+        $client->request('GET', '/api/user-apis/'.$user->getUuId());
         $this->assertResponseStatusCodeSame(200);
         $this->assertJsonContains([
             'userName' => $user->getUserName(),
@@ -84,7 +91,7 @@ class UserResourceTest extends CustomApiTestCase
 
         $this->userLogin($client, 'franek@example.com', 'qwerty');
 
-        $client->request('GET', '/api/user-apis/'.$user->getId());
+        $client->request('GET', '/api/user-apis/'.$user->getUuId());
         $this->assertJsonContains([
             'isMe' => true
         ]);
