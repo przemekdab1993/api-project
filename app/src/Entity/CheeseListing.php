@@ -11,14 +11,11 @@ use ApiPlatform\Core\Annotation\ApiResource;
 use App\ApiPlatform\CheeseListingSearchFilter;
 use App\Dto\CheeseListingInput;
 use App\Dto\CheeseListingOutput;
-use App\Validator\IsValidOwner;
 use App\Validator\ValidIsPublished;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use App\Repository\CheeseListingRepository;
 use Doctrine\ORM\Mapping as ORM;
-use Symfony\Component\Validator\Constraints\Length;
-use Symfony\Component\Validator\Constraints\NotBlank;
 
 #[ApiResource(
     collectionOperations: [
@@ -73,20 +70,12 @@ class CheeseListing
     private int $id;
 
     #[ORM\Column(type: 'string', length: 255)]
-    #[NotBlank]
-    #[Length(
-        min: 2,
-        max: 50,
-        maxMessage: 'Describe your cheese in 50 chars or less'
-    )]
     private ?string $title;
 
     #[ORM\Column(type: 'text')]
-    #[NotBlank]
     private ?string $description;
 
     #[ORM\Column(type: 'integer')]
-    #[NotBlank]
     private ?int $price;
 
     #[ORM\Column(type: 'datetime')]
@@ -96,12 +85,10 @@ class CheeseListing
     private ?bool $isPublished = false;
 
     #[ORM\Column(type: 'integer')]
-    #[NotBlank]
     private ?int $quantity;
 
     #[ORM\ManyToOne(targetEntity: UserApi::class, inversedBy: 'cheeseListings')]
     #[ORM\JoinColumn(nullable: false)]
-    #[IsValidOwner]
     private $owner;
 
     #[ORM\OneToMany(mappedBy: 'cheeseListing', targetEntity: CheeseNotification::class)]

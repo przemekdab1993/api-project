@@ -7,24 +7,38 @@ use App\Entity\CheeseListing;
 use App\Entity\UserApi;
 use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Serializer\Annotation\SerializedName;
+use App\Validator\IsValidOwner;
+use Symfony\Component\Validator\Constraints\Length;
+use Symfony\Component\Validator\Constraints\NotBlank;
 
 class CheeseListingInput
 {
     #[Groups(['cheese:write', 'user-api:write'])]
+    #[NotBlank]
+    #[Length(
+        min: 2,
+        max: 50,
+        maxMessage: 'Describe your cheese in 50 chars or less'
+    )]
     public ?string $title = null;
 
     #[Groups(['cheese:write', 'user-api:write'])]
+    #[NotBlank]
     public ?int $price = 0;
 
     #[Groups(['cheese:write'])]
     public ?bool $isPublished = false;
 
     #[Groups(['cheese:write', 'user-api:write'])]
+    #[NotBlank]
     public ?int $quantity = 0;
 
     #[Groups(['cheese:collection:post'])]
+
+    #[IsValidOwner]
     public ?UserApi $owner = null;
 
+    #[NotBlank]
     public ?string $description = null;
 
     #[Groups(['cheese:write', 'user-api:write'])]
@@ -47,7 +61,7 @@ class CheeseListingInput
         $cheeseListing->setPrice($this->price);
         $cheeseListing->setIsPublished($this->isPublished);
         $cheeseListing->setQuantity($this->quantity);
-        $cheeseListing->setOwner($this->owner);
+        !$this->owner  || $cheeseListing->setOwner($this->owner);
 
         return $cheeseListing;
     }

@@ -22,7 +22,7 @@ class CheesesListingResourceTest extends CustomApiTestCase
             'headers' => ['Content-Type' => 'application/json'],
             'json' => []
         ]);
-        $this->assertResponseStatusCodeSame(401);
+        $this->assertResponseStatusCodeSame(422);
 
 
         $user1 = $this->createAndLoginUser($client, 'ewelina@gmail.com', 'qwerty');

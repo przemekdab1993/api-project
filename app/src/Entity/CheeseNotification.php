@@ -15,7 +15,7 @@ class CheeseNotification
     #[ORM\Column(type: 'integer')]
     private ?int $id;
 
-    #[ORM\ManyToOne(targetEntity: CheeseListing::class, inversedBy: 'cheeseNotifications')]
+    #[ORM\ManyToOne(targetEntity: CheeseListing::class, inversedBy: 'cheeseNotifications', cascade: ['persist'])]
     #[ORM\JoinColumn(nullable: false)]
     private CheeseListing $cheeseListing;
 
