@@ -19,8 +19,8 @@ use Symfony\Component\Serializer\Normalizer\DenormalizerInterface;
 use Symfony\Component\Serializer\Normalizer\ObjectNormalizer;
 
 class CheeseListingInputDenormalizer //implements DenormalizerInterface, CacheableSupportsMethodInterface
-//{
-//
+{
+
 //    public function __construct(
 //        private ObjectNormalizer $objectNormalizer
 //    ) {
@@ -42,24 +42,15 @@ class CheeseListingInputDenormalizer //implements DenormalizerInterface, Cacheab
 //    {
 //        return true;
 //    }
-
+//
 //    private function createDto(array $context): CheeseListingInput
 //    {
 //        $entity = $context[AbstractObjectNormalizer::OBJECT_TO_POPULATE] ?? null;
-//        $dto = new CheeseListingInput();
-//        // not an edit, so just return an empty DTO
-//        if (!$entity) {
-//            return $dto;
-//        }
-//        if (!$entity instanceof CheeseListing) {
+//
+//        if ($entity && !$entity instanceof CheeseListing) {
 //            throw new \Exception(sprintf('Unexpected resource class "%s"', get_class($entity)));
 //        }
-//        $dto->title = $entity->getTitle();
-//        $dto->price = $entity->getPrice();
-//        $dto->description = $entity->getDescription();
-//        $dto->owner = $entity->getOwner();
-//        $dto->isPublished = $entity->getIsPublished();
-//        return $dto;
+//
+//        return CheeseListingInput::createFromEntity($entity);
 //    }
-{
 }

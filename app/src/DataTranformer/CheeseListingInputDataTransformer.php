@@ -19,20 +19,9 @@ class CheeseListingInputDataTransformer implements DataTransformerInitializerInt
      */
     public function transform($input, string $to, array $context = []): CheeseListing
     {
-        if (isset($context[AbstractItemNormalizer::OBJECT_TO_POPULATE])) {
-            $cheeseListing = $context[AbstractItemNormalizer::OBJECT_TO_POPULATE];
-        } else {
-            $cheeseListing = new CheeseListing();
-        }
+        $cheeseListing = $context[AbstractItemNormalizer::OBJECT_TO_POPULATE] ?? null;
 
-        $cheeseListing->setTitle($input?->title);
-        $cheeseListing->setDescription($input?->description);
-        $cheeseListing->setPrice($input?->price);
-        $cheeseListing->setIsPublished($input?->isPublished);
-        $cheeseListing->setQuantity($input?->quantity);
-        $cheeseListing->setOwner($input?->owner);
-
-        return $cheeseListing;
+        return $input->createOrUpdateEntity($cheeseListing);
     }
 
     public function supportsTransformation($data, string $to, array $context = []): bool
@@ -46,7 +35,7 @@ class CheeseListingInputDataTransformer implements DataTransformerInitializerInt
         return ($to === CheeseListing::class) && (($context['input']['class'] ?? null) === CheeseListingInput::class);
     }
 
-    public function initialize(string $inputClass, array $context = [])
+    public function initialize(string $inputClass, array $context = []): CheeseListingInput
     {
         $dto = new CheeseListingInput();
 
