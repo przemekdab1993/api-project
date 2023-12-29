@@ -62,6 +62,7 @@ class UserApi implements UserInterface, PasswordAuthenticatedUserInterface
 
     #[ORM\Column(type: 'uuid', unique: true)]
     #[ApiProperty(identifier: true)]
+    #[Groups(['user-api:write'])]
     private UuidInterface $uuid;
 
     #[Email]
@@ -107,10 +108,10 @@ class UserApi implements UserInterface, PasswordAuthenticatedUserInterface
 
 
 
-    public function __construct()
+    public function __construct(UuidInterface $uuid = null)
     {
         $this->cheeseListings = new ArrayCollection();
-        $this->uuid = Uuid::uuid4();
+        $this->uuid = $uuid ?: Uuid::uuid4();
     }
 
     public function getId(): ?int

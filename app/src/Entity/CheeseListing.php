@@ -40,7 +40,7 @@ use Doctrine\ORM\Mapping as ORM;
     attributes: [
         'pagination_items_per_page' => 10,
         'formats' => [
-            'jsonld', 'json', 'html', 'jsonhal', 'csv' => ['text/csv']
+            'jsonld', 'html', 'jsonhal', 'csv' => ['text/csv'], 'json'
         ]
     ],
     denormalizationContext: ['groups' => ['cheese:write']],
